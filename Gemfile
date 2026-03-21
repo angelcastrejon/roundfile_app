@@ -34,6 +34,10 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# Error tracking in production [https://sentry.io]
+gem "sentry-ruby"
+gem "sentry-rails"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 

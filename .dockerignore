@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# CI / IDE / editor
+.github
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment & credentials
+.env*
+!.env*.example
+config/master.key
+config/credentials/*.key
+
+# Development & test
+spec/
+.rspec
+.rubocop.yml
+coverage/
+Brewfile
+
+# Logs, tmp, storage
+log/
+tmp/
+storage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+PLAN.md
+LICENSE
+CHANGELOG.md
+
+# Docker-in-Docker (avoid recursive copies)
+docker-compose*.yml
+
+# Node (if any JS tooling is used)
+node_modules/
