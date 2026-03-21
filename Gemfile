@@ -34,6 +34,9 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# Rate limiting and throttling [https://github.com/rack/rack-attack]
+gem "rack-attack"
+
 # Error tracking in production [https://sentry.io]
 gem "sentry-ruby"
 gem "sentry-rails"

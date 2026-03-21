@@ -8,7 +8,7 @@ RSpec.describe User, type: :model do
     it { should validate_length_of(:name).is_at_most(50) }
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
-    it { should validate_length_of(:password).is_at_least(6) }
+    it { should validate_length_of(:password).is_at_least(8) }
 
     it "rejects invalid emails" do
       %w[user@foo,com user_at_foo.org].each do |bad_email|
@@ -34,12 +34,12 @@ RSpec.describe User, type: :model do
 
   describe "has_secure_password" do
     it "authenticates with correct password" do
-      user = create(:user, password: "foobar", password_confirmation: "foobar")
-      expect(user.authenticate("foobar")).to eq(user)
+      user = create(:user, password: "foobar12", password_confirmation: "foobar12")
+      expect(user.authenticate("foobar12")).to eq(user)
     end
 
     it "does not authenticate with wrong password" do
-      user = create(:user, password: "foobar", password_confirmation: "foobar")
+      user = create(:user, password: "foobar12", password_confirmation: "foobar12")
       expect(user.authenticate("wrong")).to be_falsey
     end
   end

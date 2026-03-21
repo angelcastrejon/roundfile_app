@@ -11,7 +11,7 @@ RSpec.describe "Users", type: :request do
   describe "POST /users" do
     it "creates a new user with valid params" do
       expect {
-        post users_path, params: { user: { name: "Test", email: "test@example.com", password: "foobar", password_confirmation: "foobar" } }
+        post users_path, params: { user: { name: "Test", email: "test@example.com", password: "foobar12", password_confirmation: "foobar12" } }
       }.to change(User, :count).by(1)
       expect(response).to redirect_to(user_path(User.last))
     end

@@ -10,8 +10,8 @@ RSpec.describe "Sessions", type: :request do
 
   describe "POST /session" do
     it "signs in with valid credentials" do
-      user = create(:user, password: "foobar", password_confirmation: "foobar")
-      post session_path, params: { email: user.email, password: "foobar" }
+      user = create(:user, password: "foobar12", password_confirmation: "foobar12")
+      post session_path, params: { email: user.email, password: "foobar12" }
       expect(response).to redirect_to(my_resumes_path)
     end
 

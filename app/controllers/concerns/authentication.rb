@@ -33,7 +33,7 @@ module Authentication
   end
 
   def store_location
-    session[:return_to] = request.fullpath if request.get?
+    session[:return_to] = request.fullpath if request.get? && request.local? || request.fullpath.start_with?("/")
   end
 
   def redirect_back_or(default)
@@ -41,12 +41,13 @@ module Authentication
   end
 
   def sign_in(user)
+    reset_session # prevent session fixation attacks
     session[:user_id] = user.id
     Current.user = user
   end
 
   def sign_out
-    session.delete(:user_id)
+    reset_session
     Current.user = nil
   end
 end
