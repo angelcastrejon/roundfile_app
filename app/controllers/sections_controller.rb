@@ -1,89 +1,55 @@
 class SectionsController < ApplicationController
+  before_action :authenticate!, except: [:show]
+  before_action :set_section, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_owner!, only: [:edit, :update, :destroy]
 
-  
   def show
-	@section = Section.find(params[:id])
-	@title = "View Section"
   end
-  
+
   def new
-	@title = "Create a Section"
-	@section = Section.new
+    @section = current_user.sections.build
   end
-  
+
   def create
-	#@userID = User.find_by_userid(current_user.userid)
-	
-    @section = current_user.sections.build(params[:section])
+    @section = current_user.sections.build(section_params)
     if @section.save
-      #sign_in @user
-      flash[:success] = "Section created!"
-      redirect_to @section
+      redirect_to @section, notice: "Section created!"
     else
-      @title = "Create Section"
-      render 'new'
+      render :new, status: :unprocessable_entity
     end
   end
-  
-  def allsections
-	@title = "All Sections"
-	@section = Section.all
-	
-	#code from DEMO APP
-	respond_to do |format|
-      format.html
-      format.xml  { render :xml => @section }
-    end
-  end
-	
-  def mysections
-	@title = "My Sections"
-	@section = Section.find_all_by_userid(current_user.id, :order => "typesection")
-	
-	
-	#code from DEMO APP
-	respond_to do |format|
-      format.html 
-      format.xml  { render :xml => @section }
-    end
-  end
-  
-  
-  
+
   def edit
-	@title = "Edit Section"
-
-    @section = Section.find(params[:id])
   end
-  
+
   def update
-	@title = "Edit Section"
-
-    @section = Section.find(params[:id])
-
-    respond_to do |format|
-      if @section.update_attributes(params[:section])
-        format.html { redirect_to(@section, :notice => 'Section was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @section.errors, :status => :unprocessable_entity }
-      end
+    if @section.update(section_params)
+      redirect_to @section, notice: "Section updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
-  
+
   def destroy
-    @section = Section.find(params[:id])
     @section.destroy
-	
-	#@resumesection = Resumesection.destroy_all_by_sectionid(params[:id])
-	
-	
-	redirect_to :action => 'mysections'
-    #respond_to do |format|
-     # format.html { redirect_to(mysections_url) }
-     # format.xml  { head :ok }
-    #end
+    redirect_to my_sections_path, notice: "Section deleted."
   end
 
+  def my_sections
+    @sections = current_user.sections.order(:section_type, :title)
+  end
+
+  private
+
+  def set_section
+    @section = Section.find(params[:id])
+  end
+
+  def authorize_owner!
+    redirect_to root_path, alert: "Not authorized." unless @section.user == current_user
+  end
+
+  def section_params
+    params.expect(section: [:section_type, :title, :content])
+  end
 end

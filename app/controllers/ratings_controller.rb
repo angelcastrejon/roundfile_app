@@ -1,44 +1,38 @@
 class RatingsController < ApplicationController
-  def new
-	@title = "Verify Your Rating"
-	@rating = Rating.new
-	if (params[:score] == "error")
-		flash[:error] = "There was an error adding your rating. Please try again."
-	end
-	
-	
-	
-  end
-  
+  before_action :authenticate!
+  before_action :set_resume
+
   def create
-    @rating = current_user.ratings.build(params[:rating])
+    @rating = @resume.ratings.build(rating_params.merge(user: current_user))
     if @rating.save
-      flash[:success] = "Rating created!"
-      redirect_to "/viewresume/#{@rating.resumeid}"
-	else
-      @title = "Create Rating"
-	  redirect_to "/newrating/#{@rating.resumeid}/error"
-      #render 'new'
+      redirect_to @resume, notice: "Rating submitted."
+    else
+      redirect_to @resume, alert: "Could not submit rating."
     end
   end
-  
-  def show
-	@rating = Rating.find(params[:id])
-	@title = "Show Rating"
+
+  def update
+    @rating = current_user.ratings.find_by!(resume: @resume)
+    if @rating.update(rating_params)
+      redirect_to @resume, notice: "Rating updated."
+    else
+      redirect_to @resume, alert: "Could not update rating."
+    end
   end
-  
-  
-  
- 
-  
+
   def destroy
-    @rating = Rating.find(params[:id])
+    @rating = current_user.ratings.find_by!(resume: @resume)
     @rating.destroy
-	
-	redirect_to "/viewresume/#{@rating.resumeid}"
-
+    redirect_to @resume, notice: "Rating removed."
   end
 
+  private
 
+  def set_resume
+    @resume = Resume.find(params[:resume_id])
+  end
 
+  def rating_params
+    params.expect(rating: [:score])
+  end
 end

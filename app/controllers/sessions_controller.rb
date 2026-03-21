@@ -1,28 +1,21 @@
 class SessionsController < ApplicationController
-
   def new
-    @title = "Sign In"
   end
 
   def create
-    user = User.authenticate(params[:session][:email],
-                             params[:session][:password])
-    if user.nil?
-      flash.now[:error] = "Invalid email/password combination."
-      @title = "Sign in"
-      render 'new'
+    user = User.find_by(email: params[:email])
+
+    if user&.authenticate(params[:password])
+      sign_in(user)
+      redirect_back_or(my_resumes_path)
     else
-      if(params[:remember] == "1")
-			sign_in_remember user
-		else
-			sign_in_not_remembered user
-		end
-		redirect_back_or "/myresumes"
+      flash.now[:alert] = "Invalid email/password combination."
+      render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
     sign_out
-    redirect_to root_path
+    redirect_to root_path, notice: "Signed out successfully."
   end
 end

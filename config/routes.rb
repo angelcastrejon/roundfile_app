@@ -1,14 +1,30 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  root "pages#home"
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # Authentication
+  get "sign_up", to: "users#new", as: :sign_up
+  get "sign_in", to: "sessions#new", as: :sign_in
+  delete "sign_out", to: "sessions#destroy", as: :sign_out
+  resource :session, only: [:create]
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Users
+  resources :users
+
+  # Resumes with nested comments, ratings, and sections
+  resources :resumes do
+    resources :comments, only: [:create, :edit, :update, :destroy]
+    resources :ratings, only: [:create, :update, :destroy]
+    resources :resume_sections, only: [:create, :update, :destroy]
+  end
+
+  # Standalone sections (user's reusable content library)
+  resources :sections, except: [:index]
+
+  # Custom collection routes
+  get "my/resumes", to: "resumes#my_resumes", as: :my_resumes
+  get "my/sections", to: "sections#my_sections", as: :my_sections
+  get "browse/resumes", to: "resumes#user_resumes", as: :user_resumes
 end

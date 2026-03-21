@@ -1,65 +1,49 @@
 class CommentsController < ApplicationController
-  def new
-	@title = "Create a Comment"
-	
-	if (!params[:message].blank?)
-		flash[:error] = "There was an error creating your comment. Please try again."
-	end
-	
-	@comment = Comment.new
-  end
-  
+  before_action :authenticate!
+  before_action :set_resume
+  before_action :set_comment, only: [:edit, :update, :destroy]
+  before_action :authorize_comment_owner!, only: [:edit, :update, :destroy]
+
   def create
-    @comment = current_user.comments.build(params[:comment])
+    @comment = @resume.comments.build(comment_params.merge(user: current_user))
     if @comment.save
-      flash[:success] = "Comment created!"
-      redirect_to "/viewresume/#{@comment.resumeid}"
+      redirect_to @resume, notice: "Comment added."
     else
-      @title = "Create Comment"
-      redirect_to "/newcomment/#{@comment.resumeid}/error"
-	  #render 'new'
+      redirect_to @resume, alert: "Could not add comment."
     end
   end
-  
-  def show
-	@comment = Comment.find(params[:id])
-	
-	@title = "Show Comment"
-  end
 
-
-
-  
-  
   def edit
-	@title = "Edit Comment"
-
-    @comment = Comment.find(params[:id])
   end
-  
+
   def update
-	@title = "Edit Comment"
-
-    @comment = Comment.find(params[:id])
-
-    respond_to do |format|
-      if @comment.update_attributes(params[:comment])
-        format.html { redirect_to("/viewresume/#{@comment.resumeid}", :notice => 'Comment was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @comment.errors, :status => :unprocessable_entity }
-      end
+    if @comment.update(comment_params)
+      redirect_to @resume, notice: "Comment updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
-  
+
   def destroy
-    @comment = Comment.find(params[:id])
     @comment.destroy
-
-	redirect_to "/viewresume/#{@comment.resumeid}"
-
+    redirect_to @resume, notice: "Comment deleted."
   end
 
-  
+  private
+
+  def set_resume
+    @resume = Resume.find(params[:resume_id])
+  end
+
+  def set_comment
+    @comment = @resume.comments.find(params[:id])
+  end
+
+  def authorize_comment_owner!
+    redirect_to @resume, alert: "Not authorized." unless @comment.user == current_user
+  end
+
+  def comment_params
+    params.expect(comment: [:body])
+  end
 end

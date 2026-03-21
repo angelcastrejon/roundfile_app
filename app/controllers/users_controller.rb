@@ -1,82 +1,58 @@
 class UsersController < ApplicationController
-before_filter :authenticate, :only => [:index, :edit, :update, :destroy]
-  before_filter :correct_user, :only => [:edit, :update]
-  before_filter :admin_user,   :only => :destroy
-  
+  before_action :authenticate!, only: [:index, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_owner!, only: [:edit, :update]
+  before_action :authorize_admin!, only: [:destroy]
+
   def index
-    @title = "All users"
-    @users = User.paginate(:page => params[:page])
+    @pagy, @users = pagy(User.order(:name))
   end
 
   def show
-    @user = User.find(params[:id])
-	@title = @user.name
-	
-	@title2 = "My Resumes"
-	@resume = Resume.find_all_by_userid(params[:id])
-	
-	#code from DEMO APP
-	respond_to do |format|
-      format.html 
-      format.xml  { render :xml => @resume }
-    end
-	
+    @resumes = @user.resumes.order(updated_at: :desc)
   end
 
   def new
-	@user = User.new
-    @title = "Sign up"
+    @user = User.new
   end
-  
+
   def create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     if @user.save
-      sign_in_not_remembered @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+      sign_in(@user)
+      redirect_to @user, notice: "Welcome to Roundfile!"
     else
-      @title = "Sign up"
-      render 'new'
+      render :new, status: :unprocessable_entity
     end
   end
-  
-  
+
   def edit
-    #@user = User.find(params[:id])
-    @title = "Edit user"
   end
-  
-  
+
   def update
-    @user = User.find(params[:id])
-    if @user.update_attributes(params[:user])
-      flash[:success] = "Profile updated."
-      redirect_to @user
+    if @user.update(user_params)
+      redirect_to @user, notice: "Profile updated."
     else
-      @title = "Edit user"
-      render 'edit'
+      render :edit, status: :unprocessable_entity
     end
   end
+
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User destroyed."
-    redirect_to users_path
+    @user.destroy
+    redirect_to users_path, notice: "User deleted."
   end
-  
-  
-  
-   private
 
-    def authenticate
-      deny_access unless signed_in?
-    end
+  private
 
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user)
-    end
-	def admin_user
-      redirect_to(root_path) unless current_user.admin?
-    end
+  def set_user
+    @user = User.find(params[:id])
+  end
 
+  def authorize_owner!
+    redirect_to root_path, alert: "Not authorized." unless current_user == @user
+  end
+
+  def user_params
+    params.expect(user: [:name, :email, :password, :password_confirmation])
+  end
 end

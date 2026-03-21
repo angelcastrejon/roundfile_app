@@ -1,103 +1,76 @@
 class ResumesController < ApplicationController
-  
+  before_action :authenticate!, except: [:index, :show, :user_resumes]
+  before_action :set_resume, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_owner!, only: [:edit, :update, :destroy]
+
+  def index
+    @pagy, @resumes = pagy(Resume.includes(:user, :ratings).order(updated_at: :desc))
+  end
+
   def show
-	@resume = Resume.find(params[:id])
-	
-	
-	@resumesection = Resumesection.find_all_by_resumeid(params[:id], :order => "orderNum")
-	@comment = Comment.find_all_by_resumeid(params[:id], :order => "created_at")
-	@rating = Rating.find_all_by_resumeid(params[:id], :order => "created_at")
-	@usercurrentrating = Rating.find_by_resumeid_and_userid(params[:id], current_user.id)
-	
-	#@section = Section.find(:all)
-	
-	@title = "View Resume"
+    @resume_sections = @resume.resume_sections.includes(:section)
+    @comments = @resume.comments.includes(:user).order(created_at: :desc)
+    @user_rating = current_user&.ratings&.find_by(resume: @resume)
+    @comment = Comment.new
+    @rating = Rating.new
   end
-  
+
   def new
-    @title = "Name Your Resume"
-	@resume = Resume.new
+    @resume = current_user.resumes.build
   end
-  
-  def create	
-    @resume = current_user.resumes.build(params[:resume])
+
+  def create
+    @resume = current_user.resumes.build(resume_params)
     if @resume.save
-      flash[:success] = "Resume created!"
-      redirect_to "/newresume/#{@resume.id}"
-	else
-      @title = "Create Resume"
-      render 'new'
+      redirect_to edit_resume_path(@resume), notice: "Resume created! Now add sections."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
-  
-  def allresumes
-	@title = "All Resumes"
-	@resume = Resume.all
-	
-	#code from DEMO APP
-	respond_to do |format|
-      format.html
-      format.xml  { render :xml => @resume }
-    end
-  end
-	
-  def myresumes
-	@title2 = "My Resumes"
-	@resume = Resume.find_all_by_userid(current_user.id)
-	@user = User.find(current_user.id)
-	@title = @user.name
-	
-	
-	#code from DEMO APP
-	respond_to do |format|
-      format.html 
-      format.xml  { render :xml => @resume }
-    end
-  end
-  
-  def userres
-	@title = "Find Resumes by User"
-	@user = User.find(:all)
-	@resume = Resume.find_all_by_userid(params[:id])
-	if (!params[:id].blank?)
-		@userselected = User.find(params[:id])
-		@title2 = "#{@userselected.name}'s Resumes"
-	else
-		@title2 = " "
-	end
-	
-  end
-  
+
   def edit
-	@title = "Edit Resume"
-    @resume = Resume.find(params[:id])
+    @available_sections = current_user.sections.order(:section_type)
+    @resume_sections = @resume.resume_sections.includes(:section)
   end
-  
+
   def update
-	@title = "Edit Resume"
-
-    @resume = Resume.find(params[:id])
-
-    respond_to do |format|
-      if @resume.update_attributes(params[:resume])
-        format.html { redirect_to("/newresumelist/#{@resume.id}", :notice => 'Resume Title was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @resume.errors, :status => :unprocessable_entity }
-      end
+    if @resume.update(resume_params)
+      redirect_to @resume, notice: "Resume updated."
+    else
+      @available_sections = current_user.sections.order(:section_type)
+      @resume_sections = @resume.resume_sections.includes(:section)
+      render :edit, status: :unprocessable_entity
     end
   end
-  
-  def destroy
-    @resume = Resume.find(params[:id])
-    @resume.destroy
-	
-	
-	redirect_to :action => 'myresumes'
 
+  def destroy
+    @resume.destroy
+    redirect_to my_resumes_path, notice: "Resume deleted."
   end
 
+  def my_resumes
+    @resumes = current_user.resumes.order(updated_at: :desc)
+  end
 
-  
+  def user_resumes
+    @users = User.order(:name)
+    if params[:user_id].present?
+      @selected_user = User.find(params[:user_id])
+      @resumes = @selected_user.resumes.order(updated_at: :desc)
+    end
+  end
+
+  private
+
+  def set_resume
+    @resume = Resume.find(params[:id])
+  end
+
+  def authorize_owner!
+    redirect_to root_path, alert: "Not authorized." unless @resume.user == current_user
+  end
+
+  def resume_params
+    params.expect(resume: [:name])
+  end
 end
