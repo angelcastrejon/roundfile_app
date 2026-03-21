@@ -1,0 +1,19 @@
+<h1><%= @title %></h1>
+<br />
+
+<%= form_for(@resume) do |f| %>
+  <%= render 'shared/error_messages', :object => f.object %>
+    <div class="field">
+		<%= f.label "Name" %><br />
+		<%= f.text_field :name %>
+    </div>
+	<div class="field">
+	<%= f.hidden_field :userid, :value => current_user.id %>
+	</div>
+	<div class="actions">
+		<%= f.submit "Make section selections...", :disable_with => "Submitting..." %>
+		</div>
+		<% end %>
+	
+	
+

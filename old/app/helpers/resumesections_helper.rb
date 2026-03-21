@@ -1,0 +1,3 @@
+module ResumesectionsHelper
+
+end
