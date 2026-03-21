@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get "sign_in", to: "sessions#new", as: :sign_in
   delete "sign_out", to: "sessions#destroy", as: :sign_out
   resource :session, only: [:create]
+  resources :password_resets, only: [:new, :create, :edit, :update], param: :token
 
   # Users
   resources :users
