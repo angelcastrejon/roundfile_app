@@ -1,9 +1,18 @@
-
-<h2 class="title">Roundfile: A Resume Tool</h2>
-
-<p class ="meta">
-  Welcome to Roundfile!
-  Create sections to mix and match to create your perfect resume!
-</p>
-<br />
-<%= link_to "Sign Up Now!", signup_path, :class => "signup_button round" %>
+<div class="text-center py-16">
+  <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
+    Build &amp; Share Your Resume
+  </h1>
+  <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+    Create modular resumes from reusable sections, share them with others,
+    and get feedback through comments and ratings.
+  </p>
+  <div class="mt-8 flex justify-center gap-4">
+    <% if signed_in? %>
+      <%= link_to "My Resumes", my_resumes_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium" %>
+      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium" %>
+    <% else %>
+      <%= link_to "Get Started", sign_up_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium" %>
+      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium" %>
+    <% end %>
+  </div>
+</div>

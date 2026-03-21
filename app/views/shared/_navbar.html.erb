@@ -1,0 +1,47 @@
+<nav class="bg-gray-900 shadow" data-controller="nav">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-6">
+        <%= link_to "Roundfile", root_path, class: "text-white text-xl font-bold tracking-tight" %>
+        <div class="hidden sm:flex items-center gap-4">
+          <%= link_to "Browse Resumes", resumes_path, class: "text-gray-300 hover:text-white text-sm" %>
+          <%= link_to "By User", user_resumes_path, class: "text-gray-300 hover:text-white text-sm" %>
+          <% if signed_in? %>
+            <%= link_to "My Resumes", my_resumes_path, class: "text-gray-300 hover:text-white text-sm" %>
+            <%= link_to "My Sections", my_sections_path, class: "text-gray-300 hover:text-white text-sm" %>
+          <% end %>
+        </div>
+      </div>
+      <div class="hidden sm:flex items-center gap-4">
+        <% if signed_in? %>
+          <%= link_to current_user.name, user_path(current_user), class: "text-gray-300 hover:text-white text-sm" %>
+          <%= link_to "Settings", edit_user_path(current_user), class: "text-gray-300 hover:text-white text-sm" %>
+          <%= button_to "Sign Out", sign_out_path, method: :delete, class: "text-gray-400 hover:text-white text-sm" %>
+        <% else %>
+          <%= link_to "Sign In", sign_in_path, class: "text-gray-300 hover:text-white text-sm" %>
+          <%= link_to "Sign Up", sign_up_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-md text-sm font-medium" %>
+        <% end %>
+      </div>
+      <button data-action="nav#toggle" class="sm:hidden text-gray-400 hover:text-white">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="sm:hidden hidden" data-nav-target="menu">
+    <div class="px-4 pt-2 pb-3 space-y-1">
+      <%= link_to "Browse Resumes", resumes_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+      <%= link_to "By User", user_resumes_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+      <% if signed_in? %>
+        <%= link_to "My Resumes", my_resumes_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+        <%= link_to "My Sections", my_sections_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+        <%= link_to "Settings", edit_user_path(current_user), class: "block text-gray-300 hover:text-white text-sm py-1" %>
+        <%= button_to "Sign Out", sign_out_path, method: :delete, class: "text-gray-400 hover:text-white text-sm" %>
+      <% else %>
+        <%= link_to "Sign In", sign_in_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+        <%= link_to "Sign Up", sign_up_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

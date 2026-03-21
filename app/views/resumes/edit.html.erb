@@ -1,9 +1,62 @@
-<h1>Editing Resume Title</h1>
-<br />
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit: <%= @resume.name %></h1>
 
+  <%# Edit resume name %>
+  <%= render "shared/error_messages", object: @resume %>
+  <%= form_with model: @resume, class: "flex gap-3 mb-8" do |f| %>
+    <%= f.text_field :name, class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border" %>
+    <%= f.submit "Update Title", class: "bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm cursor-pointer" %>
+  <% end %>
 
-<%= render 'form' %>
-<br />
-OR
-<%= link_to 'Edit Resume Sections List', "/newresumelist/#{@resume.id}" %><br /><br />
-<small><%= link_to 'Back to View Resume', @resume %></small>
+  <%# Current sections in this resume %>
+  <h2 class="text-lg font-semibold text-gray-900 mb-3">Sections in this Resume</h2>
+  <% if @resume_sections.any? %>
+    <div class="space-y-2 mb-6">
+      <% @resume_sections.each do |rs| %>
+        <div class="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-3">
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400 text-sm font-mono w-6 text-center"><%= rs.position %></span>
+            <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded"><%= rs.section.section_type %></span>
+            <span class="text-gray-900 text-sm"><%= rs.section.title %></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= form_with model: [@resume, rs], class: "flex items-center gap-1" do |f| %>
+              <%= f.number_field :position, value: rs.position, min: 1, class: "w-14 text-center rounded border-gray-300 text-sm px-1 py-1 border" %>
+              <%= f.submit "Move", class: "text-xs text-indigo-600 hover:text-indigo-800 cursor-pointer" %>
+            <% end %>
+            <%= button_to "Remove", resume_resume_section_path(@resume, rs), method: :delete,
+                data: { turbo_confirm: "Remove this section?" },
+                class: "text-xs text-red-600 hover:text-red-800" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-gray-500 mb-6">No sections added yet. Add some below!</p>
+  <% end %>
+
+  <%# Add a section %>
+  <h2 class="text-lg font-semibold text-gray-900 mb-3">Add a Section</h2>
+  <% if @available_sections.any? %>
+    <%= form_with model: [@resume, ResumeSection.new], class: "flex gap-3 items-end" do |f| %>
+      <div class="flex-1">
+        <%= f.label :section_id, "Choose a section", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.collection_select :section_id, @available_sections, :id,
+            ->(s) { "#{s.section_type}: #{s.title}" },
+            { prompt: "Select a section..." },
+            class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border text-sm" %>
+      </div>
+      <%= f.submit "Add Section", class: "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md text-sm font-medium cursor-pointer" %>
+    <% end %>
+  <% else %>
+    <p class="text-gray-500">
+      You haven't created any sections yet.
+      <%= link_to "Create your first section", new_section_path, class: "text-indigo-600 hover:text-indigo-500" %>
+    </p>
+  <% end %>
+
+  <div class="mt-8 flex gap-3">
+    <%= link_to "View Resume", resume_path(@resume), class: "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+    <%= link_to "Back to My Resumes", my_resumes_path, class: "text-gray-600 hover:text-gray-800 text-sm py-2" %>
+  </div>
+</div>

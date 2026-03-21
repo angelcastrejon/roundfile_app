@@ -1,0 +1,16 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">All Resumes</h1>
+  <% if signed_in? %>
+    <%= link_to "New Resume", new_resume_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+  <% end %>
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <% @resumes.each do |resume| %>
+    <%= render "resumes/resume_card", resume: resume %>
+  <% end %>
+</div>
+
+<div class="mt-6">
+  <%== pagy_nav(@pagy) %>
+</div>

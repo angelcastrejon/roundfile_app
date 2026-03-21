@@ -1,0 +1,21 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
+  <h3 class="font-semibold text-gray-900">
+    <%= link_to resume.name, resume_path(resume), class: "hover:text-indigo-600" %>
+  </h3>
+  <p class="text-sm text-gray-500 mt-1">
+    by <%= link_to resume.user.name, user_path(resume.user), class: "hover:text-indigo-600" %>
+  </p>
+  <div class="flex items-center gap-4 mt-3 text-sm text-gray-400">
+    <span>
+      <% avg = resume.average_rating %>
+      <% if avg > 0 %>
+        <span class="text-yellow-500"><%= "&#9733;" * avg.round %><%= "&#9734;" * (5 - avg.round) %></span>
+        <span class="ml-1"><%= avg %></span>
+      <% else %>
+        No ratings yet
+      <% end %>
+    </span>
+    <span><%= resume.comments.count %> comments</span>
+    <span><%= resume.sections.count %> sections</span>
+  </div>
+</div>

@@ -1,149 +1,104 @@
-<%= javascript_include_tag :defaults %>
-<%= stylesheet_link_tag 'star_rating', :media => 'screen' %>
-<h1><%= @title %></h1>
-<br />
-<b>Resume Name:</b> <%= @resume.name %><br />
-Author: <%= link_to "#{@resume.user.name}", user_path(@resume.userid) %><br />
-<%= link_to 'Edit Resume', edit_resume_path(@resume) %> | 
-<%= link_to 'Delete Resume', @resume, :confirm => 'Are you sure?', :method => :delete %><br />
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @resume.name %></h1>
+      <p class="text-gray-500 mt-1">
+        by <%= link_to @resume.user.name, user_path(@resume.user), class: "text-indigo-600 hover:text-indigo-500" %>
+        &middot; Updated <%= time_ago_in_words(@resume.updated_at) %> ago
+      </p>
+    </div>
+    <% if signed_in? && @resume.user == current_user %>
+      <div class="flex gap-2">
+        <%= link_to "Edit", edit_resume_path(@resume), class: "bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-md text-sm" %>
+        <%= button_to "Delete", resume_path(@resume), method: :delete,
+            data: { turbo_confirm: "Delete this resume?" },
+            class: "bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-md text-sm" %>
+      </div>
+    <% end %>
+  </div>
 
-<br />
-<br />
-<b><%= link_to "Make a Comment", "/newcomment/#{@resume.id}" %></b><br />
-<% if !@usercurrentrating.blank? %>
-Your Rating for this resume: 
-	<ul class="star-rating">
-	
-	<% if @usercurrentrating.rating_score == 1 %>
-	<li class="current-rating" style="width:20%;">Your Rating was 1/5 Stars.</li>
-	<% elsif @usercurrentrating.rating_score == 2 %>
-	<li class="current-rating" style="width:40%;">Your Rating was 2/5 Stars.</li>
-	<% elsif @usercurrentrating.rating_score == 3 %>
-	<li class="current-rating" style="width:60%;">Your Rating was 3/5 Stars.</li>
-	<% elsif @usercurrentrating.rating_score == 4 %>
-	<li class="current-rating" style="width:80%;">Your Rating was 4/5 Stars.</li>
-	<% elsif @usercurrentrating.rating_score == 5 %>
-	<li class="current-rating" style="width:100%;">Your Rating was 5/5 Stars.</li>
-	<% else %>
-	<li class="current-rating" style="width:0%;">Your Rating was 0/5 Stars.</li>
-	<% end %>
+  <%# Rating summary %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <% avg = @resume.average_rating %>
+        <span class="text-2xl text-yellow-500"><%= "&#9733;" * avg.round %><%= "&#9734;" * (5 - avg.round) %></span>
+        <span class="text-gray-600 ml-2"><%= avg %> / 5</span>
+        <span class="text-gray-400 text-sm ml-2">(<%= @resume.ratings.count %> ratings)</span>
+      </div>
+      <% if signed_in? && @resume.user != current_user %>
+        <div data-controller="star-rating">
+          <% if @user_rating %>
+            <%= form_with model: [@resume, @user_rating], method: :patch, class: "inline-flex gap-1" do |f| %>
+              <% (1..5).each do |star| %>
+                <button type="submit" name="rating[score]" value="<%= star %>"
+                        class="text-2xl cursor-pointer hover:scale-110 transition-transform <%= star <= @user_rating.score ? 'text-yellow-500' : 'text-gray-300' %>"
+                        data-action="star-rating#submit">&#9733;</button>
+              <% end %>
+            <% end %>
+          <% else %>
+            <%= form_with model: [@resume, @rating], class: "inline-flex gap-1" do |f| %>
+              <% (1..5).each do |star| %>
+                <button type="submit" name="rating[score]" value="<%= star %>"
+                        class="text-2xl cursor-pointer hover:scale-110 transition-transform text-gray-300 hover:text-yellow-500"
+                        data-action="star-rating#submit">&#9733;</button>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
-	<li> <b></b> </li>
-	<li><b></b></li>
-	<li><b></b></li>
-	<li><b></b></li>
-	<li><b></b></li>
-	</ul>
-<% else %>
-Rate Resume: 
-	<ul class="star-rating">
+  <%# Resume sections %>
+  <div class="space-y-4 mb-8">
+    <% @resume_sections.each do |rs| %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded"><%= rs.section.section_type %></span>
+          <h3 class="font-semibold text-gray-900"><%= rs.section.title %></h3>
+        </div>
+        <div class="text-gray-700 whitespace-pre-wrap"><%= rs.section.content %></div>
+      </div>
+    <% end %>
+    <% if @resume_sections.empty? %>
+      <p class="text-gray-500 text-center py-8">This resume has no sections yet.</p>
+    <% end %>
+  </div>
 
-	<li class="current-rating" style="width:0%;">Currently 0/5 Stars.</li>
+  <%# Comments %>
+  <div class="border-t border-gray-200 pt-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Comments (<%= @comments.count %>)</h2>
 
-	<li><a href="/newrating/<%= @resume.id %>/1" title="1 star out of 5" class="one-star">1</a></li>
+    <% if signed_in? %>
+      <%= form_with model: [@resume, @comment], class: "mb-6" do |f| %>
+        <div class="flex gap-3">
+          <%= f.text_area :body, placeholder: "Leave a comment...", rows: 2,
+              class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border text-sm" %>
+          <%= f.submit "Post", class: "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md text-sm font-medium cursor-pointer self-end" %>
+        </div>
+      <% end %>
+    <% end %>
 
-	<li><a href="/newrating/<%= @resume.id %>/2" title="2 stars out of 5" class="two-stars">2</a></li>
-
-	<li><a href="/newrating/<%= @resume.id %>/3" title="3 stars out of 5" class="three-stars">3</a></li>
-
-	<li><a href="/newrating/<%= @resume.id %>/4" title="4 stars out of 5" class="four-stars">4</a></li>
-
-	<li><a href="/newrating/<%= @resume.id %>/5" title="5 stars out of 5" class="five-stars">5</a></li>
-
-</ul>
-<% end %>
-
-
-<br />
-<div id= "resume">
-<p>
-<br /><br />
-<% @resumesection.each do |resumesection| %>
-
-	<%= raw resumesection.section.content %><br />
-<% end %>
-
-<br />
-<p>
-</div>	
-
-
-
-<br />
-<br />
-<bf />
-
-<div id= "ratecomment">
-	
-		
-	<div id = "rate">
-	<h3>Ratings</h3>
-		<% if !@rating.blank? %>
-		
-		<br />
-		<% @rating.each do |rating| %>
-			<%= rating.user.name %> : 
-			
-			
-	<ul class="star-rating">
-	
-	<% if rating.rating_score == 1 %>
-	<li class="current-rating" style="width:20%;">Your Rating was 1/5 Stars.</li>
-	<% elsif rating.rating_score == 2 %>
-	<li class="current-rating" style="width:40%;">Your Rating was 2/5 Stars.</li>
-	<% elsif rating.rating_score == 3 %>
-	<li class="current-rating" style="width:60%;">Your Rating was 3/5 Stars.</li>
-	<% elsif rating.rating_score == 4 %>
-	<li class="current-rating" style="width:80%;">Your Rating was 4/5 Stars.</li>
-	<% elsif rating.rating_score == 5 %>
-	<li class="current-rating" style="width:100%;">Your Rating was 5/5 Stars.</li>
-	<% else %>
-	<li class="current-rating" style="width:0%;">Your Rating was 0/5 Stars.</li>
-	<% end %>
-
-	<li> <b></b> </li>
-	<li><b></b></li>
-	<li><b></b></li>
-	<li><b></b></li>
-	<li><b></b></li>
-	</ul>
-			<% if current_user.id == rating.userid %> 
-				<%= link_to 'Delete', rating, :confirm => 'Are you sure?', :method => :delete %>
-			<% end %>
-			<br /><br />
-		<% end %>
-		<% else %>
-		
-		There are no ratings for this resume yet.
-		<br /><br /><br /><br />
-		<% end %>
-	</div>
-	
-	
-	<div id= "comment">
-	<h3>Comments</h3>
-		<% if !@comment.blank? %>
-		
-		<br />
-		<% @comment.each do |comment| %>
-			<%= comment.comment %><br />
-			<b>Author:</b> <%= link_to "#{comment.user.name}", user_path(comment.user.id) %> <br />
-			<% if current_user.id == comment.userid %>
-				<%= link_to 'Edit', edit_comment_path(comment) %> | 
-				<%= link_to 'Delete', comment, :confirm => 'Are you sure?', :method => :delete %>
-			<% end %>
-			<br /><br />
-		<% end %>
-		
-		<% else %>
-		
-		There are no comments for this Resume yet.
-		<br /><br /><br /><br />
-		<% end %>
-	</div>
-	
-	
+    <div class="space-y-4">
+      <% @comments.each do |comment| %>
+        <div class="flex gap-3">
+          <%= image_tag comment.user.gravatar_url(size: 32), alt: comment.user.name, class: "rounded-full h-8 w-8 mt-1" %>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-gray-900 text-sm"><%= comment.user.name %></span>
+              <span class="text-gray-400 text-xs"><%= time_ago_in_words(comment.created_at) %> ago</span>
+              <% if signed_in? && comment.user == current_user %>
+                <%= link_to "edit", edit_resume_comment_path(@resume, comment), class: "text-gray-400 hover:text-indigo-600 text-xs" %>
+                <%= button_to "delete", resume_comment_path(@resume, comment), method: :delete,
+                    data: { turbo_confirm: "Delete this comment?" },
+                    class: "text-gray-400 hover:text-red-600 text-xs" %>
+              <% end %>
+            </div>
+            <p class="text-gray-700 text-sm mt-1"><%= comment.body %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
-
-
-

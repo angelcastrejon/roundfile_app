@@ -1,20 +1,20 @@
-<%= javascript_include_tag :defaults %>
-<h1><%= @title %></h1>
-<br />
-<table>
-<tr><th>Type</th><th>Creator</th><th>Title</th></tr>
-<tr>
-<td><%= @section.typesection %></td>
-<td> <%= link_to "#{@section.user.name}", user_path(@section.userid) %></td>
-<td> <%= @section.title %></td></tr>
-</table>
-
-<% if current_user.id == @section.userid %>
-
-<%= link_to 'Edit', edit_section_path(@section) %> | <%= link_to 'Destroy', @section, :confirm => 'Are you sure?', :method => :delete %>
- 
-<% end %><br /><br />
-
-<h3>Content:</h3> <br />
-<%= raw @section.content %>
-
+<div class="max-w-3xl mx-auto">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded"><%= @section.section_type %></span>
+        <h1 class="text-xl font-bold text-gray-900"><%= @section.title %></h1>
+      </div>
+      <% if signed_in? && @section.user == current_user %>
+        <div class="flex gap-2">
+          <%= link_to "Edit", edit_section_path(@section), class: "text-indigo-600 hover:text-indigo-500 text-sm" %>
+          <%= button_to "Delete", section_path(@section), method: :delete,
+              data: { turbo_confirm: "Delete this section?" },
+              class: "text-red-600 hover:text-red-800 text-sm" %>
+        </div>
+      <% end %>
+    </div>
+    <p class="text-sm text-gray-500 mb-4">Created by <%= @section.user.name %></p>
+    <div class="text-gray-700 whitespace-pre-wrap"><%= @section.content %></div>
+  </div>
+</div>

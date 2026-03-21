@@ -1,25 +1,26 @@
-<%= form_for(@section) do |f| %>
-  <% if @section.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@section.errors.count, "error") %> prohibited this section from being saved:</h2>
+<%= render "shared/error_messages", object: section %>
 
-      <ul>
-      <% @section.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= form_with model: section, class: "space-y-4" do |f| %>
+  <div>
+    <%= f.label :section_type, "Type", class: "block text-sm font-medium text-gray-700" %>
+    <%= f.select :section_type,
+        options_for_select(Section::TYPES, section.section_type),
+        { prompt: "Select type..." },
+        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border" %>
+  </div>
 
-  <div class="field">
-	    <%= f.label "Type of Section" %><br /> 
-		<%= f.text_field :typesection , :readonly=> true %>
+  <div>
+    <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_field :title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border" %>
   </div>
-  <div class="field">
-    <%= f.label :content %><br />
-    <%= f.text_area :content %>
+
+  <div>
+    <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_area :content, rows: 8,
+        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2 border" %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+
+  <div>
+    <%= f.submit class: "w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-md cursor-pointer" %>
   </div>
 <% end %>
