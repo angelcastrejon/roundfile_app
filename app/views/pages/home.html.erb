@@ -1,18 +1,176 @@
-<div class="text-center py-16">
-  <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">
-    Build &amp; Share Your Resume
+<%# Hero Section %>
+<div class="text-center py-20 sm:py-28">
+  <p class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-3">Resume Builder & Collaboration Platform</p>
+  <h1 class="text-5xl font-extrabold text-gray-900 sm:text-6xl lg:text-7xl tracking-tight">
+    Build Resumes That<br>
+    <span class="text-indigo-600">Get Noticed</span>
   </h1>
-  <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-    Create modular resumes from reusable sections, share them with others,
-    and get feedback through comments and ratings.
+  <p class="mt-6 text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+    Create modular resumes from reusable sections, share them for peer review,
+    and refine your story with real feedback.
   </p>
-  <div class="mt-8 flex justify-center gap-4">
+  <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
     <% if signed_in? %>
-      <%= link_to "My Resumes", my_resumes_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium" %>
-      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium" %>
+      <%= link_to "My Resumes", my_resumes_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-lg font-semibold text-lg shadow-lg shadow-indigo-200 transition" %>
+      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-8 py-3.5 rounded-lg font-semibold text-lg transition" %>
     <% else %>
-      <%= link_to "Get Started", sign_up_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium" %>
-      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium" %>
+      <%= link_to "Get Started Free", sign_up_path, class: "bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-lg font-semibold text-lg shadow-lg shadow-indigo-200 transition" %>
+      <%= link_to "Browse Resumes", resumes_path, class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-8 py-3.5 rounded-lg font-semibold text-lg transition" %>
     <% end %>
   </div>
 </div>
+
+<%# Social Proof Bar %>
+<div class="border-y border-gray-200 py-8 mb-16">
+  <div class="flex flex-wrap justify-center gap-x-12 gap-y-4 text-center">
+    <div>
+      <p class="text-3xl font-bold text-gray-900"><%= User.count %></p>
+      <p class="text-sm text-gray-500">Users</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-gray-900"><%= Resume.count %></p>
+      <p class="text-sm text-gray-500">Resumes Created</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-gray-900"><%= Section.count %></p>
+      <p class="text-sm text-gray-500">Reusable Sections</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-gray-900"><%= Rating.count %></p>
+      <p class="text-sm text-gray-500">Peer Reviews</p>
+    </div>
+  </div>
+</div>
+
+<%# Features Grid %>
+<div class="mb-20">
+  <div class="text-center mb-12">
+    <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Everything you need to land the interview</h2>
+    <p class="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">A smarter way to build, iterate, and perfect your resume.</p>
+  </div>
+
+  <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <%# Feature 1 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Modular Sections</h3>
+      <p class="text-gray-500 leading-relaxed">Write once, use everywhere. Build a library of reusable sections &mdash; Contact, Skills, Education, Experience &mdash; and mix them into any resume.</p>
+    </div>
+
+    <%# Feature 2 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Drag & Reorder</h3>
+      <p class="text-gray-500 leading-relaxed">Tailor your resume for every opportunity. Reorder sections in seconds to highlight what matters most for each role.</p>
+    </div>
+
+    <%# Feature 3 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Star Ratings</h3>
+      <p class="text-gray-500 leading-relaxed">Get a quick quality signal from peers. A 1&ndash;5 star rating system helps you see how your resume stacks up at a glance.</p>
+    </div>
+
+    <%# Feature 4 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Peer Comments</h3>
+      <p class="text-gray-500 leading-relaxed">Get actionable, specific feedback. Classmates and colleagues can leave comments directly on your resume to help you improve.</p>
+    </div>
+
+    <%# Feature 5 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Browse & Discover</h3>
+      <p class="text-gray-500 leading-relaxed">See how others present themselves. Browse public resumes by user to get inspiration and learn what works.</p>
+    </div>
+
+    <%# Feature 6 %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center mb-5">
+        <svg class="w-6 h-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Multiple Resumes</h3>
+      <p class="text-gray-500 leading-relaxed">Different roles need different resumes. Create as many as you want, each with its own combination and ordering of sections.</p>
+    </div>
+  </div>
+</div>
+
+<%# How It Works %>
+<div class="mb-20">
+  <div class="text-center mb-12">
+    <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">How it works</h2>
+    <p class="mt-3 text-lg text-gray-500">Three steps to a polished, peer-reviewed resume.</p>
+  </div>
+
+  <div class="grid gap-8 sm:grid-cols-3">
+    <div class="text-center">
+      <div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Create Sections</h3>
+      <p class="text-gray-500">Build your content library &mdash; write Contact info, Skills, Education, Work Experience, and more as standalone, reusable blocks.</p>
+    </div>
+    <div class="text-center">
+      <div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Assemble Resumes</h3>
+      <p class="text-gray-500">Pick the sections you need, arrange them in the right order, and give your resume a name. Done in minutes.</p>
+    </div>
+    <div class="text-center">
+      <div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Get Feedback</h3>
+      <p class="text-gray-500">Share with peers, collect star ratings and written comments, then iterate until your resume shines.</p>
+    </div>
+  </div>
+</div>
+
+<%# Top Rated Resumes %>
+<% top_resumes = Resume.joins(:ratings).group("resumes.id").having("COUNT(ratings.id) >= 1").order("AVG(ratings.score) DESC").limit(3).includes(:user, :ratings) %>
+<% if top_resumes.any? %>
+  <div class="mb-20">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Top Rated Resumes</h2>
+      <p class="mt-3 text-lg text-gray-500">See what great looks like.</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <% top_resumes.each do |resume| %>
+        <%= render "resumes/resume_card", resume: resume %>
+      <% end %>
+    </div>
+    <div class="text-center mt-6">
+      <%= link_to "View All Resumes", resumes_path, class: "text-indigo-600 hover:text-indigo-500 font-medium" %>
+    </div>
+  </div>
+<% end %>
+
+<%# CTA Section %>
+<% unless signed_in? %>
+  <div class="bg-indigo-600 rounded-2xl p-12 text-center mb-8">
+    <h2 class="text-3xl font-bold text-white sm:text-4xl">Ready to build your resume?</h2>
+    <p class="mt-4 text-lg text-indigo-100 max-w-xl mx-auto">Join <%= User.count %> users already creating and reviewing resumes on Roundfile.</p>
+    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+      <%= link_to "Create Free Account", sign_up_path, class: "bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3.5 rounded-lg font-semibold text-lg transition" %>
+      <%= link_to "Sign In", sign_in_path, class: "border border-indigo-300 hover:border-white text-white px-8 py-3.5 rounded-lg font-semibold text-lg transition" %>
+    </div>
+  </div>
+<% end %>
