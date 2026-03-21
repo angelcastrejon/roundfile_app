@@ -1,24 +1,14 @@
-class Resume < ActiveRecord::Base
+class Resume < ApplicationRecord
+  belongs_to :user
 
-attr_accessible :name, :userid
-	
-	belongs_to :user, :class_name => 'User', :foreign_key => 'userid'
-	has_many :section
-	has_many :resumesection, :class_name => 'Resumesection',:dependent => :destroy, :foreign_key => 'resumeid'	
-	
-	validates :name, :presence => true
-	validates :userid, :presence => true
+  has_many :resume_sections, -> { order(:position) }, dependent: :destroy
+  has_many :sections, through: :resume_sections
+  has_many :comments, dependent: :destroy
+  has_many :ratings, dependent: :destroy
 
+  validates :name, presence: true
+
+  def average_rating
+    ratings.average(:score)&.round(1) || 0
+  end
 end
-
-# == Schema Information
-#
-# Table name: resumes
-#
-#  id         :integer         not null, primary key
-#  name       :string(255)
-#  userid     :integer
-#  created_at :datetime
-#  updated_at :datetime
-#
-

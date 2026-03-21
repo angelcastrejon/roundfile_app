@@ -1,27 +1,21 @@
-class Section < ActiveRecord::Base
-	attr_accessible :typesection, :content, :userid, :title
-	
-	belongs_to :user, :class_name => 'User', :foreign_key => 'userid'
-	has_many :resumesection, :class_name => 'Resumesection', :dependent => :destroy, :foreign_key => 'sectionid'
-		#belongs_to :resumesection
+class Section < ApplicationRecord
+  TYPES = [
+    "Contact",
+    "Objective",
+    "Qualifications",
+    "Education",
+    "Skills",
+    "Employment History",
+    "References",
+    "Other"
+  ].freeze
 
-	validates :typesection, :presence => true
-	validates :content, :presence => true
-	validates :userid, :presence => true
-	validates :title, :presence => true
+  belongs_to :user
+
+  has_many :resume_sections, dependent: :destroy
+  has_many :resumes, through: :resume_sections
+
+  validates :section_type, presence: true, inclusion: { in: TYPES }
+  validates :title, presence: true
+  validates :content, presence: true
 end
-
-
-# == Schema Information
-#
-# Table name: sections
-#
-#  id          :integer         not null, primary key
-#  typesection :string(255)
-#  content     :string(255)
-#  userid      :integer
-#  created_at  :datetime
-#  updated_at  :datetime
-#  title       :string(255)
-#
-
