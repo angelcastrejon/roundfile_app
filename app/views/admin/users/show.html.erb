@@ -1,0 +1,68 @@
+<%= link_to "← Back to users", admin_users_path, class: "text-sm text-indigo-600 hover:text-indigo-500" %>
+
+<div class="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center gap-4 mb-6">
+    <%= image_tag @user.gravatar_url(size: 64), alt: @user.name, class: "rounded-full w-16 h-16" %>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @user.name %></h1>
+      <p class="text-sm text-gray-500"><%= @user.email %></p>
+      <div class="flex items-center gap-2 mt-1">
+        <% if @user.admin? %>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">Admin</span>
+        <% end %>
+        <span class="text-xs text-gray-400">Joined <%= @user.created_at.strftime("%B %d, %Y") %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @user.resumes.count %></p>
+      <p class="text-xs text-gray-500">Resumes</p>
+    </div>
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @user.sections.count %></p>
+      <p class="text-xs text-gray-500">Sections</p>
+    </div>
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @user.comments.count %></p>
+      <p class="text-xs text-gray-500">Comments</p>
+    </div>
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @user.ratings.count %></p>
+      <p class="text-xs text-gray-500">Ratings</p>
+    </div>
+  </div>
+
+  <% unless current_user?(@user) %>
+    <div class="flex gap-3 border-t border-gray-200 pt-4">
+      <%= button_to @user.admin? ? "Revoke Admin" : "Make Admin",
+          toggle_admin_admin_user_path(@user), method: :patch,
+          class: "bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer" %>
+      <%= button_to "Delete User", admin_user_path(@user), method: :delete,
+          data: { turbo_confirm: "Delete #{@user.name} and all their data? This cannot be undone." },
+          class: "bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<% if @resumes.any? %>
+  <h2 class="text-lg font-semibold text-gray-900 mt-8 mb-4">Resumes</h2>
+  <div class="space-y-2">
+    <% @resumes.each do |resume| %>
+      <div class="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div>
+          <%= link_to resume.name, admin_resume_path(resume), class: "font-medium text-gray-900 hover:text-indigo-600" %>
+          <p class="text-xs text-gray-400">
+            <%= resume.average_rating %> avg rating &middot;
+            <%= resume.comments.size %> comments &middot;
+            <%= resume.created_at.strftime("%b %d, %Y") %>
+          </p>
+        </div>
+        <%= button_to "Delete", admin_resume_path(resume), method: :delete,
+            data: { turbo_confirm: "Delete this resume?" },
+            class: "text-red-600 hover:text-red-800 text-sm" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

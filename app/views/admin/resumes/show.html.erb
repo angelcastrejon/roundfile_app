@@ -1,0 +1,69 @@
+<%= link_to "← Back to resumes", admin_resumes_path, class: "text-sm text-indigo-600 hover:text-indigo-500" %>
+
+<div class="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @resume.name %></h1>
+      <p class="text-sm text-gray-500">
+        by <%= link_to @resume.user.name, admin_user_path(@resume.user), class: "hover:text-indigo-600" %>
+        &middot; Created <%= @resume.created_at.strftime("%B %d, %Y") %>
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to "View public", resume_path(@resume), class: "text-sm text-gray-500 hover:text-gray-700" %>
+      <%= button_to "Delete Resume", admin_resume_path(@resume), method: :delete,
+          data: { turbo_confirm: "Delete this resume and all its data?" },
+          class: "bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @resume.average_rating %></p>
+      <p class="text-xs text-gray-500">Avg Rating (<%= @resume.ratings.size %>)</p>
+    </div>
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @comments.size %></p>
+      <p class="text-xs text-gray-500">Comments</p>
+    </div>
+    <div class="text-center p-3 bg-gray-50 rounded-md">
+      <p class="text-xl font-bold text-gray-900"><%= @sections.size %></p>
+      <p class="text-xs text-gray-500">Sections</p>
+    </div>
+  </div>
+</div>
+
+<% if @sections.any? %>
+  <h2 class="text-lg font-semibold text-gray-900 mt-8 mb-4">Sections</h2>
+  <div class="space-y-2">
+    <% @sections.each do |rs| %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"><%= rs.section.section_type %></span>
+          <span class="font-medium text-gray-900 text-sm"><%= rs.section.title %></span>
+        </div>
+        <p class="text-sm text-gray-500 line-clamp-2"><%= rs.section.content %></p>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @comments.any? %>
+  <h2 class="text-lg font-semibold text-gray-900 mt-8 mb-4">Comments</h2>
+  <div class="space-y-2">
+    <% @comments.each do |comment| %>
+      <div class="flex items-start justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div>
+          <p class="text-sm text-gray-700"><%= comment.body %></p>
+          <p class="text-xs text-gray-400 mt-1">
+            by <%= link_to comment.user.name, admin_user_path(comment.user), class: "hover:text-indigo-600" %>
+            &middot; <%= time_ago_in_words(comment.created_at) %> ago
+          </p>
+        </div>
+        <%= button_to "Delete", admin_comment_path(comment), method: :delete,
+            data: { turbo_confirm: "Delete this comment?" },
+            class: "text-red-600 hover:text-red-800 text-sm shrink-0 ml-4" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

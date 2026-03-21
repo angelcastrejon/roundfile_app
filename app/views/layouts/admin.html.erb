@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html class="h-full bg-gray-100">
+  <head>
+    <title><%= content_for(:title) || "Admin — Roundfile" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full">
+    <div class="min-h-full">
+      <%# ── Admin top bar ── %>
+      <nav class="bg-gray-900 shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-14">
+            <div class="flex items-center gap-6">
+              <%= link_to "Roundfile Admin", admin_dashboard_path, class: "text-white font-bold tracking-tight" %>
+            </div>
+            <div class="flex items-center gap-4 text-sm">
+              <%= link_to "Back to app", root_path, class: "text-gray-400 hover:text-white" %>
+              <span class="text-gray-600">|</span>
+              <span class="text-gray-400"><%= current_user.name %></span>
+              <%= button_to "Sign Out", sign_out_path, method: :delete, class: "text-gray-400 hover:text-white" %>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="max-w-7xl mx-auto flex">
+        <%# ── Sidebar ── %>
+        <aside class="hidden sm:block w-56 shrink-0 py-6 pr-6">
+          <nav class="space-y-1">
+            <%= admin_nav_link "Dashboard", admin_dashboard_path, "dashboard" %>
+            <%= admin_nav_link "Users", admin_users_path, "users" %>
+            <%= admin_nav_link "Resumes", admin_resumes_path, "resumes" %>
+            <%= admin_nav_link "Comments", admin_comments_path, "comments" %>
+          </nav>
+        </aside>
+
+        <%# ── Main content ── %>
+        <main class="flex-1 py-6">
+          <%= render "shared/flash" %>
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

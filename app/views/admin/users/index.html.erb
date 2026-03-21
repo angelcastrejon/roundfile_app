@@ -1,0 +1,56 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Users <span class="text-gray-400 text-base font-normal">(<%= @pagy.count %>)</span></h1>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Resumes</th>
+        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Role</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% @users.each do |user| %>
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              <%= image_tag user.gravatar_url(size: 32), alt: user.name, class: "rounded-full w-8 h-8" %>
+              <%= link_to user.name, admin_user_path(user), class: "text-sm font-medium text-gray-900 hover:text-indigo-600" %>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500"><%= user.email %></td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center"><%= user.resumes.size %></td>
+          <td class="px-4 py-3 text-center">
+            <% if user.admin? %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">Admin</span>
+            <% else %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">User</span>
+            <% end %>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500"><%= user.created_at.strftime("%b %d, %Y") %></td>
+          <td class="px-4 py-3 text-right text-sm space-x-2">
+            <% unless current_user?(user) %>
+              <%= button_to user.admin? ? "Revoke Admin" : "Make Admin",
+                  toggle_admin_admin_user_path(user), method: :patch,
+                  class: "text-indigo-600 hover:text-indigo-800 text-sm font-medium" %>
+              <%= button_to "Delete", admin_user_path(user), method: :delete,
+                  data: { turbo_confirm: "Delete #{user.name} and all their data?" },
+                  class: "text-red-600 hover:text-red-800 text-sm font-medium" %>
+            <% else %>
+              <span class="text-gray-300 text-xs">You</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-6">
+  <%== pagy_nav(@pagy) %>
+</div>

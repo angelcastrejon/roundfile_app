@@ -14,6 +14,9 @@
       </div>
       <div class="hidden sm:flex items-center gap-4">
         <% if signed_in? %>
+          <% if current_user.admin? %>
+            <%= link_to "Admin", admin_dashboard_path, class: "text-yellow-400 hover:text-yellow-300 text-sm font-medium" %>
+          <% end %>
           <%= link_to current_user.name, user_path(current_user), class: "text-gray-300 hover:text-white text-sm" %>
           <%= link_to "Settings", edit_user_path(current_user), class: "text-gray-300 hover:text-white text-sm" %>
           <%= button_to "Sign Out", sign_out_path, method: :delete, class: "text-gray-400 hover:text-white text-sm" %>
@@ -36,6 +39,9 @@
       <% if signed_in? %>
         <%= link_to "My Resumes", my_resumes_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
         <%= link_to "My Sections", my_sections_path, class: "block text-gray-300 hover:text-white text-sm py-1" %>
+        <% if current_user.admin? %>
+          <%= link_to "Admin", admin_dashboard_path, class: "block text-yellow-400 hover:text-yellow-300 text-sm py-1 font-medium" %>
+        <% end %>
         <%= link_to "Settings", edit_user_path(current_user), class: "block text-gray-300 hover:text-white text-sm py-1" %>
         <%= button_to "Sign Out", sign_out_path, method: :delete, class: "text-gray-400 hover:text-white text-sm" %>
       <% else %>

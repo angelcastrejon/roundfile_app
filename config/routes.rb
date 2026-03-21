@@ -11,6 +11,16 @@ Rails.application.routes.draw do
   resource :session, only: [:create]
   resources :password_resets, only: [:new, :create, :edit, :update], param: :token
 
+  # Admin portal
+  namespace :admin do
+    get "/", to: "dashboard#show", as: :dashboard
+    resources :users, only: [:index, :show, :destroy] do
+      member { patch :toggle_admin }
+    end
+    resources :resumes, only: [:index, :show, :destroy]
+    resources :comments, only: [:index, :destroy]
+  end
+
   # Users
   resources :users
 

@@ -1,0 +1,43 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Resumes <span class="text-gray-400 text-base font-normal">(<%= @pagy.count %>)</span></h1>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resume</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
+        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Rating</th>
+        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Comments</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% @resumes.each do |resume| %>
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3">
+            <%= link_to resume.name, admin_resume_path(resume), class: "text-sm font-medium text-gray-900 hover:text-indigo-600" %>
+          </td>
+          <td class="px-4 py-3">
+            <%= link_to resume.user.name, admin_user_path(resume.user), class: "text-sm text-gray-500 hover:text-indigo-600" %>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center"><%= resume.average_rating %></td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center"><%= resume.comments.size %></td>
+          <td class="px-4 py-3 text-sm text-gray-500"><%= resume.created_at.strftime("%b %d, %Y") %></td>
+          <td class="px-4 py-3 text-right">
+            <%= link_to "View", resume_path(resume), class: "text-gray-500 hover:text-gray-700 text-sm mr-2" %>
+            <%= button_to "Delete", admin_resume_path(resume), method: :delete,
+                data: { turbo_confirm: "Delete this resume?" },
+                class: "text-red-600 hover:text-red-800 text-sm font-medium" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-6">
+  <%== pagy_nav(@pagy) %>
+</div>

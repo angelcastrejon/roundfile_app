@@ -1,0 +1,74 @@
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+
+<%# ── Stats cards ── %>
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+  <% [
+    ["Users", @total_users, admin_users_path],
+    ["Resumes", @total_resumes, admin_resumes_path],
+    ["Comments", @total_comments, admin_comments_path],
+    ["Ratings", @total_ratings, nil],
+    ["Sections", @total_sections, nil]
+  ].each do |label, count, path| %>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <p class="text-sm text-gray-500"><%= label %></p>
+      <p class="text-2xl font-bold text-gray-900 mt-1">
+        <% if path %>
+          <%= link_to count, path, class: "hover:text-indigo-600" %>
+        <% else %>
+          <%= count %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+</div>
+
+<div class="grid gap-6 lg:grid-cols-3">
+  <%# ── Recent users ── %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <h2 class="text-sm font-semibold text-gray-900 mb-3">Recent Users</h2>
+    <div class="space-y-3">
+      <% @recent_users.each do |user| %>
+        <div class="flex items-center gap-3">
+          <%= image_tag user.gravatar_url(size: 32), alt: user.name, class: "rounded-full w-8 h-8" %>
+          <div class="min-w-0">
+            <%= link_to user.name, admin_user_path(user), class: "text-sm font-medium text-gray-900 hover:text-indigo-600 truncate block" %>
+            <p class="text-xs text-gray-400"><%= time_ago_in_words(user.created_at) %> ago</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "View all users →", admin_users_path, class: "block mt-4 text-sm text-indigo-600 hover:text-indigo-500 font-medium" %>
+  </div>
+
+  <%# ── Recent resumes ── %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <h2 class="text-sm font-semibold text-gray-900 mb-3">Recent Resumes</h2>
+    <div class="space-y-3">
+      <% @recent_resumes.each do |resume| %>
+        <div>
+          <%= link_to resume.name, admin_resume_path(resume), class: "text-sm font-medium text-gray-900 hover:text-indigo-600" %>
+          <p class="text-xs text-gray-400">by <%= resume.user.name %> &middot; <%= time_ago_in_words(resume.created_at) %> ago</p>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "View all resumes →", admin_resumes_path, class: "block mt-4 text-sm text-indigo-600 hover:text-indigo-500 font-medium" %>
+  </div>
+
+  <%# ── Recent comments ── %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <h2 class="text-sm font-semibold text-gray-900 mb-3">Recent Comments</h2>
+    <div class="space-y-3">
+      <% @recent_comments.each do |comment| %>
+        <div>
+          <p class="text-sm text-gray-700 truncate"><%= comment.body %></p>
+          <p class="text-xs text-gray-400">
+            by <%= comment.user.name %> on
+            <%= link_to comment.resume.name, admin_resume_path(comment.resume), class: "hover:text-indigo-600" %>
+            &middot; <%= time_ago_in_words(comment.created_at) %> ago
+          </p>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "View all comments →", admin_comments_path, class: "block mt-4 text-sm text-indigo-600 hover:text-indigo-500 font-medium" %>
+  </div>
+</div>
