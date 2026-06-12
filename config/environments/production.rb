@@ -88,4 +88,18 @@ Rails.application.configure do
 
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Explicit session cookie configuration.
+  config.session_store :cookie_store,
+    key: "_roundfile_session",
+    same_site: :lax,
+    secure: true
+
+  # Security response headers.
+  config.action_dispatch.default_headers = {
+    "X-Frame-Options" => "DENY",
+    "X-Content-Type-Options" => "nosniff",
+    "Referrer-Policy" => "strict-origin-when-cross-origin",
+    "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
+  }
 end

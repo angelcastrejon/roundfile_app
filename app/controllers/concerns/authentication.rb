@@ -33,7 +33,9 @@ module Authentication
   end
 
   def store_location
-    session[:return_to] = request.fullpath if request.get? && request.local? || request.fullpath.start_with?("/")
+    return unless request.get?
+    path = request.fullpath
+    session[:return_to] = path if path.start_with?("/") && !path.start_with?("//")
   end
 
   def redirect_back_or(default)

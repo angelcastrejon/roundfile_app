@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       Rails.logger.info "[AUTH] Login success: user=#{user.id} ip=#{request.remote_ip}"
       redirect_back_or(my_resumes_path)
     else
-      Rails.logger.warn "[AUTH] Login failure: email=#{params[:email]} ip=#{request.remote_ip}"
+      Rails.logger.warn "[AUTH] Login failure: email=#{params[:email]&.to_s&.split('@')&.first&.truncate(3, omission: '***')}@*** ip=#{request.remote_ip}"
       flash.now[:alert] = "Invalid email/password combination."
       render :new, status: :unprocessable_entity
     end
